@@ -1,16 +1,32 @@
 import axios from 'axios';
 
-async function getLiveArrivals() {
-  const stopId = '490008660N';
-  const url = `https://api.tfl.gov.uk/StopPoint/${stopId}/Arrivals`;
+export type Arrival = {
+  id: string;
+  lineName: string;
+  destinationName: string;
+  timeToStation: number; // seconds
+};
+
+export type ArrivalSummary = {
+  route: string;
+  destination: string;
+  minutesToArrival: number;
+};
+
+export async function fetchArrivals(stopCode: string): Promise<ArrivalSummary[]> {
+  const url = `https://api.tfl.gov.uk/StopPoint/${stopCode}/Arrivals`;
   try {
     const response = await axios.get(url);
-    console.log(response.data); // This will log the array of arrivals
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching arrivals:', error);
-    throw error;
+    const arrivals: Arrival[] = response.data;
+    // Sort by soonest arrival
+    const sorted = arrivals.sort((a, b) => a.timeToStation - b.timeToStation);
+    // Map to summary and take first 5
+    return sorted.slice(0, 5).map(arrival => ({
+      route: arrival.lineName,
+      destination: arrival.destinationName,
+      minutesToArrival: Math.round(arrival.timeToStation / 60)
+    }));
+  } catch {
+    return [];
   }
 }
-
-export default getLiveArrivals;
