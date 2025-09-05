@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   fetchArrivals,
   getCoordinatesFromPostcode,
@@ -48,6 +49,14 @@ function App() {
       <h1 className="text-3xl font-bold underline text-center text-cyan-600 m-4">
         BusBoard
       </h1>
+      <div className="text-center mb-4">
+        <Link
+          to="/history"
+          className="text-cyan-700 underline hover:text-cyan-900"
+        >
+          Learn about the history of London buses
+        </Link>
+      </div>
       <div className="flex flex-col items-center mb-4">
         <label htmlFor="postcode" className="mb-2">
           Enter Postcode:
